@@ -1,0 +1,42 @@
+name: Commute Alert
+
+on:
+  schedule:
+    # Weekdays. GitHub Actions uses UTC.
+    # 14:45 UTC ~= 8:45am MDT
+    - cron: "45 14 * * 1-5"
+    # 15:45 UTC ~= 8:45am MST
+    - cron: "45 15 * * 1-5"
+    # 23:30 UTC ~= 5:30pm MDT
+    - cron: "30 23 * * 1-5"
+    # 00:30 UTC ~= 5:30pm MST
+    - cron: "30 0 * * 1-5"
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run commute check
+        env:
+          # We'll add secrets later in GitHub repo settings
+          # GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+          # EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          # EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+          # SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+          TZ: "America/Denver"
+        run: |
+          python commute_check.py
