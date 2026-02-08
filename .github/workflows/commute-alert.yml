@@ -36,11 +36,11 @@ jobs:
           COMMUTE_ORIGIN_LAT: ${{ secrets.COMMUTE_ORIGIN_LAT }}
           COMMUTE_ORIGIN_LNG: ${{ secrets.COMMUTE_ORIGIN_LNG }}
           COMMUTE_DEST_LAT: ${{ secrets.COMMUTE_DEST_LAT }}
-          COMMUTE_DEST_LNG: ${{ secrets.COMMUTE_DEST_LNG }}
+          COMMUTE_DEST_LNG: ${{ secrets.COMMUTE_DEST_LNG }} 
 
           # Tune these
-          DELAY_THRESHOLD_MIN: "3"
-          DELAY_THRESHOLD_PCT: "3"
+          DELAY_THRESHOLD_MIN: "0"
+          DELAY_THRESHOLD_PCT: "0"
 
           TZ: "America/Denver"
 
