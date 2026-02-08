@@ -56,6 +56,7 @@ def mailjet_send(api_key: str, api_secret: str, email_from: str, email_to: str, 
                 "To": [{"Email": email_to}],
                 "Subject": subject,
                 "TextPart": text,
+                "CustomID": "commute-alert",
             }
         ]
     }
@@ -67,8 +68,25 @@ def mailjet_send(api_key: str, api_secret: str, email_from: str, email_to: str, 
         data=json.dumps(payload),
         timeout=25,
     )
+
+    # Always parse and print response (safe; it won't include your secret key)
+    try:
+        resp = r.json()
+    except Exception:
+        resp = {"raw": r.text}
+
+    print("Mailjet HTTP:", r.status_code)
+    print("Mailjet response:", json.dumps(resp, indent=2)[:4000])
+
     if r.status_code >= 400:
         raise RuntimeError(f"Mailjet error {r.status_code}: {r.text}")
+
+    # If Mailjet returned per-message status/errors, enforce success
+    msgs = resp.get("Messages") if isinstance(resp, dict) else None
+    if msgs and isinstance(msgs, list):
+        st = msgs[0].get("Status")
+        if st != "success":
+            raise RuntimeError(f"Mailjet message Status != success: {st}")
 
 
 def already_alerted_today(state_dir: str, today_key: str) -> bool:
